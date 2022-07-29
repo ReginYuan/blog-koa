@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-  mobile: String, //手机号
+  username: String, //用户名字
+  email: String, //手机号
   password: String, //密码
   status: {
     type: String,
