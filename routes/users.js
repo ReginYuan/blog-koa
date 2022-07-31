@@ -5,9 +5,11 @@
 const router = require("koa-router")();
 const Users = require("../models/userSchema");
 const util = require("../utils/util");
+const log4j = require("../utils/log4j");
 const jwt = require("jsonwebtoken");
 router.prefix("/users");
 
+log4j.info(`post params:哈哈哈哈哈哈哈`);
 router.post("/login", async (ctx, next) => {
   try {
     const { email, password } = ctx.request.body;
@@ -65,11 +67,20 @@ router.post("/sign", async (ctx, next) => {
     );
     if (res && res.email == email) {
       let msg = "用户已存在,请输入新账号";
-      ctx.body = util.success(res, msg);
+      let data = {};
+      const existence = "old";
+      data = { ...res, existence };
+      ctx.body = util.success(data, msg);
     } else {
-      const res1 = await Users.insertMany({ email, password }, "email");
+      const res1 = await Users.insertMany(
+        { username, email, password },
+        "username email password"
+      );
       let msg = "注册成功,请登录";
-      ctx.body = util.success(res1, msg);
+      let data = {};
+      const existence = "new";
+      data = { ...res1, existence };
+      ctx.body = util.success(data, msg);
     }
   } catch (error) {
     ctx.body = util.fail("注册失败", error.msg);
