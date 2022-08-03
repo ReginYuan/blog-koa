@@ -30,7 +30,7 @@ router.post("/login", async (ctx, next) => {
             status: "1" //Updates the matched element in the array
           }
         },
-        { new: true, select: "email status" }
+        { new: true, select: "email status username image" }
       );
       const data = res1;
       const token = jwt.sign(

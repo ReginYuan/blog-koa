@@ -4,6 +4,7 @@ const userSchema = mongoose.Schema({
   username: String, //用户名字
   email: String, //手机号
   password: String, //密码
+  image: String, //用户头像
   status: {
     type: String,
     default: "0"

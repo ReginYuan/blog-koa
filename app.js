@@ -10,8 +10,9 @@ const koajwt = require("koa-jwt");
 const log4j = require("./utils/log4j");
 const router = require("koa-router")();
 const users = require("./routes/users");
-const house = require("./routes/house");
-const order = require("./routes/order");
+const article = require("./routes/article");
+const tags = require("./routes/tags");
+// const order = require("./routes/order");
 const util = require("./utils/util");
 
 // error handler
@@ -52,6 +53,14 @@ app.use(async (ctx, next) => {
   });
   //设置允许跨域
   ctx.set("Access-Control-Allow-Origin", "*");
+  // 表明服务器支持所有头信息字段
+  ctx.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild"
+  );
+  // Content-Type表示具体请求中的媒体类型信息
+  ctx.set("Content-Type", "application/json;charset=utf-8");
+  // 允许HTTP请求的方法
   ctx.set("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELLETE");
 });
 // secret:密钥 unless:设置不校验的接口
@@ -65,10 +74,12 @@ router.prefix("/api");
 
 // 加载用户路由
 router.use(users.routes(), users.allowedMethods());
-// 加载民宿路由
-router.use(house.routes(), house.allowedMethods());
+// 加载文章路由
+router.use(article.routes(), article.allowedMethods());
+// 加载标签路由
+router.use(tags.routes(), tags.allowedMethods());
 // 加载订单路由
-router.use(order.routes(), order.allowedMethods());
+// router.use(order.routes(), order.allowedMethods());
 // 一级路由
 app.use(router.routes(), router.allowedMethods());
 // error-handling
