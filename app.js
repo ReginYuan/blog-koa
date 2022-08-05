@@ -40,8 +40,9 @@ app.use(async (ctx, next) => {
   const start = new Date();
   const ms = new Date() - start;
   log4j.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
-  log4j.info(`get params:${JSON.stringify(ctx.request.query)}`);
-  log4j.info(`post params:${JSON.stringify(ctx.request.body)}`);
+  log4j.info(`get query:${JSON.stringify(ctx.request.query)}`);
+  log4j.info(`post body:${JSON.stringify(ctx.request.body)}`);
+  log4j.info(`post params:${JSON.stringify(ctx.params)}`);
   log4j.info(`log output info`);
   await next().catch((err) => {
     if (err.status == "401") {

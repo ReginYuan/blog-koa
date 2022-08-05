@@ -28,7 +28,6 @@ router.get("/all", async (ctx, next) => {
       // 如果查询的数据大于十条就按十条查询返回
       list = await query.skip(skipIndex).limit(skipNum);
     }
-
     if (query) {
       let msg = "文章列表信息";
       ctx.body = util.success(
@@ -54,11 +53,11 @@ router.get("/feed", async (ctx, next) => {
   try {
     // 查询所有数据
     const { pageNum, pageSize, tag, email } = ctx.request.query;
-   
+
     const res = await Feedarticle.find({ email });
-   
+
     let { followingId } = res[0];
-  
+
     const query = Article.find({
       $and: [{ tag }, { authorId: { $in: followingId } }]
     });
@@ -67,7 +66,7 @@ router.get("/feed", async (ctx, next) => {
     let total = await Article.countDocuments({
       $and: [{ tag }, { authorId: { $in: followingId } }]
     });
-  
+
     // 根据前端数据快速查询页面和下一个索引
     const { page, skipIndex } = util.pager(pageNum, pageSize);
 
@@ -102,13 +101,60 @@ router.get("/feed", async (ctx, next) => {
   }
 });
 
-// 文章详情
-router.get("/detail", async (ctx, next) => {
+//新增关注
+router.post("/favorite", async (ctx, next) => {
   try {
     // 查询所有数据
-    const { id } = ctx.request.query;
-    const res = await Article.find({ id });
-    log4j.info("res", `get params:${JSON.stringify(res)}`);
+    const { slug } = ctx.request.body;
+    const res = await Article.find({ slug });
+    if (res) {
+      const { favorited, favoritesCount } = res[0];
+      if (favorited) {
+        const res1 = await Article.findOneAndUpdate(
+          {
+            slug: slug //Matching condition
+          },
+          {
+            $set: {
+              favorited: false, //Updates the matched element in the array
+              favoritesCount: favoritesCount - 1
+            }
+          },
+          { new: true }
+        );
+        let msg = "点赞取消";
+        ctx.body = util.success(res1, msg);
+      } else {
+        const res1 = await Article.findOneAndUpdate(
+          {
+            slug: slug //Matching condition
+          },
+          {
+            $set: {
+              favorited: true, //Updates the matched element in the array
+              favoritesCount: favoritesCount + 1
+            }
+          },
+          { new: true }
+        );
+        let msg = "点赞成功";
+        ctx.body = util.success(res1, msg);
+      }
+    } else {
+      ctx.body = util.fail("点赞失败");
+    }
+  } catch (error) {
+    ctx.body = util.fail(error.msg);
+  }
+});
+
+
+// 文章详情
+router.get("/detail/:slug", async (ctx, next) => {
+  try {
+    // 查询所有数据
+    const { slug } = ctx.params;
+    const res = await Article.find({ slug });
     if (res) {
       let msg = "文章详情信息";
       ctx.body = util.success(res, msg);

@@ -9,7 +9,6 @@ const log4j = require("../utils/log4j");
 const jwt = require("jsonwebtoken");
 router.prefix("/users");
 
-log4j.info(`post params:哈哈哈哈哈哈哈`);
 router.post("/login", async (ctx, next) => {
   try {
     const { email, password } = ctx.request.body;
@@ -32,7 +31,7 @@ router.post("/login", async (ctx, next) => {
         },
         { new: true, select: "email status username image" }
       );
-      const data = res1;
+      let data = {};
       const token = jwt.sign(
         {
           data
@@ -40,7 +39,7 @@ router.post("/login", async (ctx, next) => {
         "ReginYuan",
         { expiresIn: "1h" }
       );
-      data.token = token;
+      data = { token, ...res1 };
       let msg = "登陆成功";
       ctx.body = util.success(data, msg);
     } else {
