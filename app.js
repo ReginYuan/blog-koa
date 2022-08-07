@@ -12,7 +12,7 @@ const router = require("koa-router")();
 const users = require("./routes/users");
 const article = require("./routes/article");
 const tags = require("./routes/tags");
-// const order = require("./routes/order");
+const evaluate = require("./routes/evaluate");
 const util = require("./utils/util");
 
 // error handler
@@ -80,7 +80,7 @@ router.use(article.routes(), article.allowedMethods());
 // 加载标签路由
 router.use(tags.routes(), tags.allowedMethods());
 // 加载订单路由
-// router.use(order.routes(), order.allowedMethods());
+router.use(evaluate.routes(), evaluate.allowedMethods());
 // 一级路由
 app.use(router.routes(), router.allowedMethods());
 // error-handling
